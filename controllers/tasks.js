@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const Task = require("../models/Task");
-const createError = require("http-errors");
+const { createCustomError } = require("../middleware/errors/custom-errors");
 const asyncWrapper = require("../utils/async");
 
 const getAllTasks = asyncWrapper(async (req, res, next) => {
@@ -18,7 +18,8 @@ const getTask = asyncWrapper(async (req, res, next) => {
   const task = await Task.findOne({ _id: taskID }).exec();
 
   if (!task) {
-    return res.status(404).json({ msg: `task with id ${taskID} not found` });
+    return next(createCustomError(`task with id ${taskID} not found`, 404));
+    // return res.status(404).json({ msg: `task with id ${taskID} not found` });
   }
   res.status(200).json(task);
 });
@@ -33,7 +34,7 @@ const updateTask = asyncWrapper(async (req, res, next) => {
     { new: true, runValidators: false }
   );
   if (!task) {
-    return res.status(404).json({ msg: `task with id ${taskID} not found` });
+    return next(createCustomError(`task with id ${taskID} not found`, 404));
   }
   res.status(200).json({ id: taskID, data: req.body });
 });
@@ -42,7 +43,7 @@ const deleteTask = asyncWrapper(async (req, res, next) => {
   const { id: taskID } = req.params;
   const task = await Task.findOneAndDelete({ _id: taskID });
   if (!task) {
-    return res.status(404).json({ msg: `task with id ${taskID} not found` });
+    return next(createCustomError(`task with id ${taskID} not found`, 404));
   }
   res.status(200).json({ "status": "success", id: null });
 });
