@@ -4,8 +4,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-const notFound = require("./middleware/not-found");
-const errorHandler = require("./middleware/error-handler");
+const notFound = require("./middleware/errors/not-found");
+const errorHandler = require("./middleware/errors/error-handler");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
